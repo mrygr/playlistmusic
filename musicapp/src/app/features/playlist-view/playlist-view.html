@@ -1,1 +1,110 @@
-<p>playlist-view works!</p>
+<div class="playlists-container">
+
+  <ng-container *ngIf="currentView === 'all'">
+    <div class="section-header">
+      <h2 class="section-title">Mis Playlists</h2>
+      <button class="btn-create" *ngIf="playlists.length > 0" (click)="openModal()">＋ Crear Playlist</button>
+    </div>
+    
+    <div class="grid-layout">
+      <div class="playlist-card empty-state-card" *ngIf="playlists.length === 0" (click)="openModal()">
+        <div class="cover-wrapper empty-wrapper">
+          <span class="plus-icon">＋</span>
+        </div>
+        <div class="playlist-details centered">
+          <h3 class="playlist-name">Crea tu primera playlist</h3>
+        </div>
+      </div>
+
+      <ng-container *ngIf="playlists.length > 0">
+        <div class="playlist-card" *ngFor="let pl of playlists" (click)="goToDetail(pl.id)" (mouseleave)="closeMenu()">
+          
+          <div class="cover-wrapper">
+            <img [src]="pl.cover" [alt]="pl.name" class="cover-img">
+            
+            <div class="hover-actions" [class.force-visible]="activeMenuPlaylistId === pl.id">
+              <button class="btn-dots" (click)="toggleContextMenu(pl.id, $event)">⋮</button>
+            </div>
+    
+            <div class="context-menu-container" *ngIf="activeMenuPlaylistId === pl.id">
+              <button class="menu-action delete" (click)="deletePlaylist(pl, $event)">
+                ❌ Eliminar playlist
+              </button>
+            </div>
+          </div>
+    
+          <div class="playlist-details">
+            <h3 class="playlist-name" [title]="pl.name">{{ pl.name }}</h3>
+            <p class="playlist-desc" *ngIf="pl.description" [title]="pl.description">{{ pl.description }}</p>
+            <p class="playlist-songs">{{ pl.songs.length }} canciones</p> </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="modal-overlay" *ngIf="showCreateModal" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>Crear nueva Playlist</h3>
+        <label class="modal-label">Nombre <span class="required-mark">*</span></label>
+        <input type="text" [(ngModel)]="newPlaylistName" placeholder="Nombre de tu playlist" class="modal-input" (keyup.enter)="confirmCreate()" maxlength="50" focus>
+        <label class="modal-label">Descripción <span class="optional-mark">(Opcional)</span></label>
+        <textarea [(ngModel)]="newPlaylistDesc" placeholder="Añade una descripción..." class="modal-textarea" maxlength="200" rows="3"></textarea>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="closeModal()">Cancelar</button>
+          <button class="btn-confirm" (click)="confirmCreate()">Crear</button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="currentView === 'detail' && selectedPlaylist">
+    
+    <div class="playlist-banner" [style.backgroundImage]="'url(' + selectedPlaylist.cover + ')'">
+      <div class="banner-gradient"></div> <button class="btn-back" (click)="goBack()">← Mis playlists</button>
+
+      <div class="banner-content">
+        <div class="banner-text">
+          <h1 class="banner-title">{{ selectedPlaylist.name }}</h1>
+          <p class="banner-desc" *ngIf="selectedPlaylist.description">{{ selectedPlaylist.description }}</p>
+          <p class="banner-meta">{{ selectedPlaylist.songs.length }} canciones</p>
+        </div>
+        
+        <div class="banner-actions">
+          <button class="btn-play-all" (click)="playAll()" *ngIf="selectedPlaylist.songs.length > 0">
+            <span class="icon">▶</span> Reproducir todo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="songs-list-container">
+      
+      <div class="empty-songs" *ngIf="selectedPlaylist.songs.length === 0">
+        <p>Aún no has agregado canciones a esta playlist.</p>
+      </div>
+
+      <div class="song-row" *ngFor="let song of selectedPlaylist.songs">
+        
+        <div class="song-img-wrapper">
+          <img [src]="song.cover" class="song-cover-round">
+          <div class="play-overlay" (click)="playSong(song)">
+            <span class="play-icon">▶</span>
+          </div>
+        </div>
+
+        <div class="song-info">
+          <div class="song-title">{{ song.title }}</div>
+          <div class="song-artist">{{ song.artist }}</div>
+        </div>
+
+        <div class="song-duration">{{ song.duration }}</div>
+
+        <div class="song-actions">
+          <button class="btn-remove-song" (click)="removeSong(song, $event)">Eliminar de playlist</button>
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>

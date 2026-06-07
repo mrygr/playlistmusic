@@ -1,0 +1,357 @@
+$bg-main: #121212;
+$bg-sidebar: #000000;
+$bg-player: #181818;
+$bg-hover: #282828;
+$primary: #1db954;
+$text-main: #ffffff;
+$text-muted: #b3b3b3;
+$sidebar-width: 200px;
+$sidebar-collapsed-width: 70px;
+
+/* --- GRID MAESTRO --- */
+.app-layout {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  background-color: $bg-main;
+  color: $text-main;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  overflow: hidden;
+  
+  /* Definimos las áreas del grid */
+  grid-template-columns: $sidebar-width 1fr;
+  grid-template-rows: 64px 1fr 90px;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main"
+    "sidebar player";
+   // "player player";
+  
+  transition: grid-template-columns 0.3s ease;
+
+&.collapsed {
+    grid-template-columns: $sidebar-collapsed-width 1fr;
+    
+    .sidebar {
+      .collapse-btn {
+        align-self: center; 
+      }
+      
+      .user-profile .avatar img {
+        width: 40px; 
+        height: 40px;
+      }
+
+      .username, .text, .arrow {
+        display: none;
+      }
+
+      .nav-item, .logout-btn {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+  grid-area: sidebar;
+  background-color: $bg-sidebar;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  height: 100%;
+  overflow-x: hidden;
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+  &::-webkit-scrollbar-thumb:hover { background: #888; }
+
+    .collapse-btn,
+    .user-profile,
+    .sidebar-footer {
+    flex-shrink: 0; 
+   }
+
+  .collapse-btn {
+    align-self: flex-end; 
+    background: transparent;
+    border: none;
+    color: $text-muted;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-bottom: 20px;
+    padding: 5px;
+    transition: align-self 0.3s;
+    &:hover { color: $text-main; }
+  }
+
+  .user-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 10px;
+    
+    .avatar img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: width 0.3s ease, height 0.3s ease; 
+    }
+.username {
+      margin-top: 15px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-align: center;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+  }
+
+    .nav-menu {
+        flex: 1;
+        overflow-y: auto; 
+        overflow-x: hidden;
+        padding-bottom: 20px; 
+
+        &::-webkit-scrollbar { 
+            width: 4px;
+        }
+        &::-webkit-scrollbar-track { 
+            background: transparent; 
+        }
+        &::-webkit-scrollbar-thumb { 
+            background: #333;
+            border-radius: 10px; 
+        }
+        &::-webkit-scrollbar-thumb:hover { 
+            background: #555;
+        }
+
+.nav-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 10px;
+      color: $text-muted;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+
+      &:hover {
+        background-color: $bg-hover;
+        color: $text-main;
+      }
+      
+      .icon {
+        min-width: 24px;
+        text-align: center;
+      }
+
+      .text {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .arrow { margin-left: auto; font-size: 0.7rem; }
+    }
+}
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    border-top: 1px solid #282828;
+    .logout-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: transparent;
+      border: none;
+      color: $text-muted;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      &:hover { background-color: #2a1f1f; color: #ff5252; }
+      
+      .icon { min-width: 24px; text-align: center; }
+      .text {
+        flex: 1;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+/* --- TOPBAR --- */
+.topbar {
+  grid-area: topbar;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 30px;
+
+  .search-container {
+    background-color: #242424;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    width: 450px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+    
+    &:focus-within {
+      border-color: white;
+      background-color: #2a2a2a;
+    }
+
+    input {
+      flex: 1; 
+      background: transparent;
+      border: none;
+      color: white;
+      outline: none;
+      font-size: 1rem;
+    }
+    
+    .search-icon { 
+      margin-left: 10px; 
+      color: $text-muted; 
+      cursor: pointer;
+    }
+  }
+}
+
+/* --- MAIN CONTENT --- */
+.main-content {
+  grid-area: main;
+  background: linear-gradient(180deg, #1f1f1f 0%, $bg-main 100%);
+  border-radius: 8px;
+  margin-right: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  padding-bottom: 120px;
+  padding: 20px;
+  height: 100%;
+  &::-webkit-scrollbar { width: 8px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+  &::-webkit-scrollbar-thumb:hover { background: #888; } 
+}
+
+/* --- PLAYER --- */
+.player {
+  grid-area: player;
+  background-color: $bg-player;
+  border-top: 1px solid #282828;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  
+  .player-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 30%; 
+    .song-image { 
+      width: 56px; height: 56px; 
+      background-color: #333; 
+      border-radius: 4px; 
+    }
+    .song-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;}
+    .song-artist { font-size: 0.8rem; color: $text-muted; }
+  }
+
+  .player-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px; 
+    width: 40%;
+    color: $text-muted;
+    
+    .ctrl-btn { 
+      font-size: 1.5rem;
+      cursor: pointer; 
+      &:hover { color: white; } 
+    }
+    
+    .play-btn {
+      font-size: 1.8rem; 
+      background: white;
+      color: black;
+      width: 46px; height: 46px;
+      display: flex; justify-content: center; align-items: center;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      cursor: pointer;
+      &:hover { transform: scale(1.05); }
+    }
+  }
+
+  .player-actions {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+    .queue-btn { background: transparent; border: none; color: $text-muted; cursor: pointer; &:hover { color: white; } }
+  }
+}
+
+/* --- MODAL (OVERLAY) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+
+  .modal-content {
+    background: #282828;
+    padding: 30px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+    h2 { margin-top: 0; margin-bottom: 20px; }
+
+    .form-group {
+      margin-bottom: 15px;
+      display: flex; flex-direction: column; gap: 8px;
+      label { font-size: 0.85rem; font-weight: 600; }
+      input, textarea {
+        background: #3e3e3e; border: none; color: white;
+        padding: 12px; border-radius: 4px; outline: none;
+      }
+      textarea { resize: vertical; min-height: 80px; }
+    }
+
+    .modal-actions {
+      display: flex; justify-content: flex-end; gap: 15px; margin-top: 25px;
+      button { padding: 10px 20px; border-radius: 50px; font-weight: 600; cursor: pointer; border: none; }
+      .btn-cancel { background: transparent; color: white; &:hover { background: rgba(255,255,255,0.1); } }
+      .btn-create { background: $primary; color: black; &:hover { transform: scale(1.04); } }
+    }
+  }
+}

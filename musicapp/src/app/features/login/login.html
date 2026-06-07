@@ -1,1 +1,69 @@
-<p>login works!</p>
+<div class="login-container">
+  
+  <div class="login-left">
+    <div class="mosaic-grid">
+      <div class="mosaic-item"><img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300" alt="Concierto"></div>
+      <div class="mosaic-item"><img src="https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=300" alt="Guitarra"></div>
+      <div class="mosaic-item"><img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300" alt="DJ"></div>
+      <div class="mosaic-item"><img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300" alt="Micrófono"></div>
+    </div>
+    <div class="overlay-text">
+      <h2>Siente la Música</h2>
+      <p>Crea el soundtrack de tu vida</p>
+    </div>
+  </div>
+
+  <div class="login-right">
+    
+    <div class="sliding-wrapper" [class.slide-active]="showForm">
+      
+      <div class="panel panel-welcome">
+        <h1 class="brand-title">Music<span>App</span></h1>
+        <p class="welcome-text">¡Te damos la bienvenida a tu gestor de listas de reproducción favorito!</p>
+        <button class="btn btn-primary" (click)="abrirFormulario()">Iniciar Sesión</button>
+      </div>
+
+      <div class="panel panel-form">
+        <div class="form-container">
+            <button class="back-arrow" (click)="cerrarFormulario()">← Volver</button>
+            
+            <h2>Ingresa a tu cuenta</h2>
+            
+            <form [formGroup]="loginForm" (ngSubmit)="ingresar()" class="auth-form" novalidate>            
+                <div class="form-group">
+                <label for="username">Usuario</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    formControlName="username" 
+                    placeholder="Ej. usuario"
+                    [class.input-error]="loginForm.get('username')?.touched && loginForm.get('username')?.invalid"
+                >
+                <span class="error-text" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.errors?.['required']">
+                    El usuario es obligatorio.
+                </span>
+                </div>
+
+                <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    formControlName="password" 
+                    placeholder="••••••••"
+                    [class.input-error]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+                >
+                <span class="error-text" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">
+                    La contraseña es obligatoria.
+                </span>
+                </div>
+
+                <button type="submit" class="btn btn-submit" [class.disabled]="loginForm.invalid">
+                Ingresar
+                </button>
+          </form>
+        </div>
+     </div>
+    </div>
+  </div>
+</div>
