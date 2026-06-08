@@ -1,14 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router'; // <- Importaciones necesarias
+import { ActivatedRoute, Router } from '@angular/router'; 
 import { PlaylistService, Playlist, Song } from '../../core/services/playlist';
 import { NotificationService } from '../../core/services/notification';
 
 @Component({
   selector: 'app-playlist-view',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './playlist-view.html',
   styleUrl: './playlist-view.scss'
 })
@@ -17,22 +16,15 @@ export class PlaylistView implements OnInit {
   private notificationService = inject(NotificationService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef); // Solución al bug de rutas hijas
 
-  // Estados de vista
   currentView: 'all' | 'detail' = 'all';
   selectedPlaylist: Playlist | null = null;
-
-  get playlists(): Playlist[] {
-    return this.playlistService.playlists();
-  }
-
-  showCreateModal = false;
-  newPlaylistName = '';
-  newPlaylistDesc = '';
   activeMenuPlaylistId: number | null = null;
 
+  get playlists(): Playlist[] { return this.playlistService.playlists(); }
+
   ngOnInit() {
-    // Escuchamos los cambios en la URL
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id === 'all' || !id) {
@@ -42,63 +34,36 @@ export class PlaylistView implements OnInit {
         this.currentView = 'detail';
         this.loadPlaylist(Number(id));
       }
+      this.cdr.detectChanges(); // Fuerza el refresco visual inmediato
     });
   }
 
   loadPlaylist(id: number) {
     const playlist = this.playlistService.getPlaylistById(id);
-    if (playlist) {
-      this.selectedPlaylist = playlist;
-    } else {
-      this.router.navigate(['/playlist/all']); // Regresa si no existe
-    }
+    if (playlist) this.selectedPlaylist = playlist;
+    else this.router.navigate(['/playlist/all']);
   }
 
-  goToDetail(id: number) {
-    this.router.navigate(['/playlist', id]);
-  }
+  goToDetail(id: number) { this.router.navigate(['/playlist', id]); }
+  goBack() { this.router.navigate(['/playlist/all']); }
 
-  goBack() {
-    this.router.navigate(['/playlist/all']);
-  }
-
-  // --- Funciones del Detalle de Playlist ---
-  playAll() {
-    this.notificationService.show(`Reproduciendo toda la playlist "${this.selectedPlaylist?.name}"`, 'success');
-  }
-
-  playSong(song: Song) {
-    this.notificationService.show(`Reproduciendo: ${song.title}`, 'info');
-  }
+  playAll() { this.notificationService.show(`Reproduciendo toda la playlist "${this.selectedPlaylist?.name}"`, 'success'); }
+  playSong(song: Song) { this.notificationService.show(`Reproduciendo: ${song.title}`, 'info'); }
 
   removeSong(song: Song, event: Event) {
-    event.stopPropagation(); // Evita que se dispare el play de la fila
+    event.stopPropagation();
     if (this.selectedPlaylist) {
       this.playlistService.removeSongFromPlaylist(this.selectedPlaylist.id, song.id);
-      this.notificationService.show(`"${song.title}" eliminada de la playlist`, 'info');
-  
+      this.notificationService.show(`"${song.title}" eliminada`, 'info');
       this.loadPlaylist(this.selectedPlaylist.id);
     }
   }
 
-  // --- Funciones (crear, modal, menu) ---
   toggleContextMenu(playlistId: number, event: Event) {
     event.stopPropagation();
     this.activeMenuPlaylistId = this.activeMenuPlaylistId === playlistId ? null : playlistId;
   }
   closeMenu() { this.activeMenuPlaylistId = null; }
-  openModal() { this.showCreateModal = true; this.newPlaylistName = ''; this.newPlaylistDesc = ''; }
-  closeModal() { this.showCreateModal = false; }
-
-  confirmCreate() {
-    if (!this.newPlaylistName.trim()) {
-      this.notificationService.show('El nombre no puede estar vacío', 'error');
-      return;
-    }
-    this.playlistService.createPlaylist(this.newPlaylistName.trim(), this.newPlaylistDesc.trim());
-    this.notificationService.show(`Playlist creada`, 'success');
-    this.closeModal();
-  }
 
   deletePlaylist(playlist: Playlist, event: Event) {
     event.stopPropagation();

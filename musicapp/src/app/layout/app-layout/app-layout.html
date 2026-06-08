@@ -1,6 +1,6 @@
 <div class="app-layout" [class.collapsed]="isSidebarCollapsed">
   
-<aside class="sidebar">
+  <aside class="sidebar">
     <button class="collapse-btn" (click)="toggleSidebar()" [title]="isSidebarCollapsed ? 'Expandir' : 'Ocultar'">
       <span class="icon">{{ isSidebarCollapsed ? '☰' : '◀' }}</span>
     </button>
@@ -13,10 +13,12 @@
     </div>
 
     <nav class="nav-menu">
-      <div class="nav-item" routerLink="/home" [title]="isSidebarCollapsed ? 'Inicio' : ''">
+      <div class="nav-item" routerLink="/home" routerLinkActive="active" [title]="isSidebarCollapsed ? 'Inicio' : ''">
         <span class="icon">🏠</span>
         <span class="text">Inicio</span>
       </div>
+
+      <div class="nav-divider"></div>
 
       <div class="nav-item" routerLink="/playlist/all" routerLinkActive="active" [title]="isSidebarCollapsed ? 'Mis Playlists' : ''">
         <span class="icon">📚</span>
@@ -25,6 +27,8 @@
     </nav>
 
     <div class="sidebar-footer">
+      <div class="nav-divider"></div>
+      
       <button class="logout-btn" (click)="cerrarSesion()" [title]="isSidebarCollapsed ? 'Cerrar Sesión' : ''">
         <span class="icon">🚪</span>
         <span class="text">Cerrar Sesión</span>
@@ -32,7 +36,7 @@
     </div>
   </aside>
 
-<header class="topbar">
+  <header class="topbar">
     <div class="search-container">
       <input type="text" placeholder="Buscar canciones, artistas...">
       <span class="search-icon">🔍</span> 
@@ -43,7 +47,7 @@
     <router-outlet></router-outlet>
   </main>
 
-<footer class="player">
+  <footer class="player">
     <div class="player-info">
       <div class="song-image"></div>
       <div class="song-details">
@@ -63,20 +67,64 @@
     </div>
   </footer>
 
-  <div class="modal-overlay" *ngIf="showCreateModal">
-    <div class="modal-content">
-      <h2>Crear Nueva Playlist</h2>
-      <div class="form-group">
-        <label>Nombre</label>
-        <input type="text" placeholder="Ej. Favoritas del mes" (input)="newPlaylistName = $any($event.target).value">
+  <div class="global-menu-overlay" *ngIf="playlistService.globalMenuSignal() as menuState" (click)="closeGlobalMenu()">
+    
+    <div class="context-menu-wrapper" 
+         [style.top]="menuState.top" 
+         [style.bottom]="menuState.bottom" 
+         [style.left]="menuState.left" 
+         [style.right]="menuState.right" 
+         [ngClass]="[menuState.verticalPos, menuState.horizontalPos]"
+         (click)="$event.stopPropagation()">
+      
+      <div class="arrow-pointer"></div>
+
+      <div class="context-menu-container">
+        <div class="slider-track" [class.slide-to-playlists]="menuView === 'playlists'">
+          
+        <div class="menu-pane">
+          <button class="menu-action" style="justify-content: center;" (click)="showPlaylistsMenu($event)">
+            Agregar a playlist
+          </button>
+        </div>
+
+          <div class="menu-pane">
+            <div class="pane-header">
+              <button class="btn-back" (click)="goBackInMenu($event)">◀</button>
+              <span>Guardar en...</span>
+            </div>
+            <div class="playlists-list">
+              <button class="menu-action create-btn" *ngIf="menuState.allowCreate" (click)="openCreateModalFromMenu($event)">
+                ＋ Crear nueva playlist
+              </button>
+              <div class="menu-divider" *ngIf="menuState.allowCreate"></div>
+
+              <button class="menu-action list-item" *ngFor="let playlist of availablePlaylists" (click)="addSongToPlaylist(playlist, $event)">
+                {{ playlist.name }}
+              </button>
+              
+              <div *ngIf="availablePlaylists.length === 0" class="empty-msg">No hay playlists disponibles.</div>
+            </div>
+          </div>
+
+        </div>
       </div>
-      <div class="form-group">
-        <label>Descripción</label>
-        <textarea placeholder="Opcional" (input)="newPlaylistDesc = $any($event.target).value"></textarea>
-      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="playlistService.globalModalSignal().show" (click)="closeGlobalModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>{{ playlistService.globalModalSignal().initialSong ? 'Crear Playlist y Agregar Canción' : 'Crear nueva Playlist' }}</h3>
+      
+      <label class="modal-label">Nombre <span class="required-mark">*</span></label>
+      <input type="text" [(ngModel)]="newPlaylistName" placeholder="Nombre de la playlist" class="modal-input" (keyup.enter)="confirmGlobalCreate()">
+      
+      <label class="modal-label">Descripción <span class="optional-mark">(Opcional)</span></label>
+      <textarea [(ngModel)]="newPlaylistDesc" placeholder="Añade una descripción..." class="modal-textarea" rows="3"></textarea>
+      
       <div class="modal-actions">
-        <button class="btn-cancel" (click)="closeModal()">Cancelar</button>
-        <button class="btn-create" (click)="crearPlaylist()">Crear</button>
+        <button class="btn-cancel" (click)="closeGlobalModal()">Cancelar</button>
+        <button class="btn-confirm" (click)="confirmGlobalCreate()">{{ playlistService.globalModalSignal().initialSong ? 'Crear y Agregar' : 'Crear' }}</button>
       </div>
     </div>
   </div>

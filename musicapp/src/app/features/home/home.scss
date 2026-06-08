@@ -33,7 +33,7 @@ $color-primary: #1db954;
   cursor: pointer;
   position: relative; /* Clave para que el menú flote en relación a esta tarjeta */
 
-  &:hover {
+  &:hover, &.active-menu {
     background-color: $bg-card-hover;
     .hover-actions { opacity: 1; }
   }
@@ -207,4 +207,14 @@ $color-primary: #1db954;
     margin: 0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
+}
+
+/* BOTÓN 3 PUNTOS "ENCENDIDO" EN EL HOME MIENTRAS EL MENÚ ESTÁ ABIERTO */
+.song-card.active-menu .hover-actions {
+  opacity: 1;
+  visibility: visible;
+}
+.song-card.active-menu .hover-actions .btn-dots {
+  background: rgba(0,0,0,0.9);
+  transform: scale(1.1);
 }
