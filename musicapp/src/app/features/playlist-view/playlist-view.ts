@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router'; 
 import { PlaylistService, Playlist, Song } from '../../core/services/playlist';
 import { NotificationService } from '../../core/services/notification';
+import { PlayerService } from '../../core/services/player';
 
 @Component({
   selector: 'app-playlist-view',
@@ -17,6 +18,7 @@ export class PlaylistView implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef); // Solución al bug de rutas hijas
+  public playerService = inject(PlayerService);
 
   currentView: 'all' | 'detail' = 'all';
   selectedPlaylist: Playlist | null = null;
@@ -47,9 +49,23 @@ export class PlaylistView implements OnInit {
   goToDetail(id: number) { this.router.navigate(['/playlist', id]); }
   goBack() { this.router.navigate(['/playlist/all']); }
 
-  playAll() { this.notificationService.show(`Reproduciendo toda la playlist "${this.selectedPlaylist?.name}"`, 'success'); }
-  playSong(song: Song) { this.notificationService.show(`Reproduciendo: ${song.title}`, 'info'); }
-
+  playAll() { 
+    if (this.selectedPlaylist) {
+      // Mandamos la playlist completa al cerebro del reproductor
+      this.playerService.playPlaylist(this.selectedPlaylist);
+      
+      // Mantenemos la notificación para dar feedback al usuario
+      //this.notificationService.show(`Reproduciendo toda la playlist "${this.selectedPlaylist.name}"`, 'success');
+    }
+  }
+  playSong(song: Song) { 
+    // Al no pasarle el segundo parámetro (context), el reproductor borra la cola
+    // y crea una nueva solo con esta canción.
+    this.playerService.playSong(song); 
+    
+    // Opcional: mantienes la notificación para dar feedback visual
+    //this.notificationService.show(`Reproduciendo: ${song.title}`, 'success'); 
+  }
   removeSong(song: Song, event: Event) {
     event.stopPropagation();
     if (this.selectedPlaylist) {
@@ -72,3 +88,6 @@ export class PlaylistView implements OnInit {
     this.closeMenu();
   }
 }
+
+
+

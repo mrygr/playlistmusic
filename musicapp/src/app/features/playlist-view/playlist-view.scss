@@ -243,6 +243,7 @@ $bg-menu-hover: #3e3e3e;
   &:hover { background: rgba(0,0,0,0.8); }
 }
 
+/* --- BANNER SUPERIOR (Reemplaza desde aquí hacia abajo) --- */
 .banner-content {
   position: relative;
   z-index: 2;
@@ -250,27 +251,58 @@ $bg-menu-hover: #3e3e3e;
   display: flex;
   justify-content: space-between;
   align-items: flex-end; 
+  gap: 24px; /* Separación garantizada entre texto y botón */
+
+  /* Para pantallas pequeñas, apilamos el contenido hacia abajo */
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
 }
 
 .banner-text {
   flex: 1;
+  min-width: 0; /* Crucial: le dice al flex-child que puede encogerse y truncar texto */
+  
   .banner-title {
     font-size: 3.5rem;
     font-weight: 800;
     margin: 0 0 8px 0;
     color: white;
     text-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    /* Evitamos que el título empuje el layout */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media (max-width: 768px) {
+      font-size: 2.2rem;
+      white-space: normal; /* En móviles permitimos que el título baje de línea */
+    }
   }
+  
   .banner-desc {
     font-size: 1rem;
     color: #e0e0e0;
     margin: 0 0 8px 0;
+    /* Magia pura: si la descripción es inmensa, la corta en máximo 2 líneas */
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
+  
   .banner-meta {
     font-size: 0.85rem;
     color: $text-muted;
     margin: 0;
   }
+}
+
+.banner-actions {
+  flex-shrink: 0; /* Protege el botón: impide que el texto lo aplaste */
 }
 
 .btn-play-all {
@@ -286,7 +318,12 @@ $bg-menu-hover: #3e3e3e;
   align-items: center;
   gap: 8px;
   transition: transform 0.2s, background-color 0.2s;
-  &:hover { transform: scale(1.05); background-color: #1ed760; }
+  
+  &:hover { 
+    transform: scale(1.05); 
+    background-color: #1ed760; 
+  }
+  
   .icon { font-size: 1.1rem; }
 }
 

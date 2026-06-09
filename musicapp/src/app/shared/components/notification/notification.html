@@ -1,1 +1,14 @@
-<p>notification works!</p>
+<div class="notification-wrapper" [class.show]="(notification$ | async)?.show">
+      
+  <div class="toast" [ngClass]="(notification$ | async)?.type">
+    
+    <span class="toast-icon" *ngIf="(notification$ | async)?.type === 'success'">✓</span>
+    <span class="toast-icon" *ngIf="(notification$ | async)?.type === 'error'">⚠</span>
+    <span class="toast-icon" *ngIf="(notification$ | async)?.type === 'info'">ℹ</span>
+
+    <span class="message">{{ (notification$ | async)?.message }}</span>
+    
+    <button class="close-btn" (click)="close()">&times;</button>
+  </div>
+
+</div>

@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { PlaylistService, Playlist } from '../../core/services/playlist';
 import { NotificationService } from '../../core/services/notification';
+import { PlayerService } from '../../core/services/player';
+import { Player } from '../player/player';
 
 @Component({
   selector: 'app-app-layout',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, FormsModule, RouterOutlet, RouterLink, RouterLinkActive, Player],
   templateUrl: './app-layout.html',
   styleUrl: './app-layout.scss'
 })
@@ -24,6 +26,9 @@ export class AppLayout implements OnInit {
   newPlaylistName: string = '';
   newPlaylistDesc: string = '';
 
+  constructor(public playerService: PlayerService) {
+  }
+
   // Variable para controlar qué vista del menú deslizable mostramos
   menuView: 'main' | 'playlists' = 'main';
 
@@ -33,7 +38,15 @@ export class AppLayout implements OnInit {
   }
 
   toggleSidebar() { this.isSidebarCollapsed = !this.isSidebarCollapsed; }
-  cerrarSesion() { localStorage.removeItem('user_session'); this.router.navigate(['/login']); }
+  
+  cerrarSesion() { 
+    // 1. Apagamos el reproductor y limpiamos el estado antes de destruir la sesión
+    this.playerService.stopAndClearQueue(); 
+    
+    // 2. Borramos los datos de sesión y redirigimos
+    localStorage.removeItem('user_session'); 
+    this.router.navigate(['/login']); 
+  }
 
   // --- LÓGICA DEL MENÚ GLOBAL ---
   get availablePlaylists(): Playlist[] {

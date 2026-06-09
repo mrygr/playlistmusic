@@ -6,6 +6,7 @@ export interface Song {
   artist: string;
   cover: string;
   duration: string;
+  url: string;
 }
 
 export interface Playlist {
@@ -39,22 +40,50 @@ export interface GlobalModalState {
 export class PlaylistService {
   
   public allSongs: Song[] = [
-    { id: 1, title: 'Bohemian Rhapsody', artist: 'Queen', cover: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=300&q=80', duration: '5:55' },
-    { id: 2, title: 'Hotel California', artist: 'Eagles', cover: 'https://images.unsplash.com/photo-1493225457124-a1a2a5f51508?auto=format&fit=crop&w=300&q=80', duration: '6:30' },
-    { id: 3, title: 'Sweet Child O\' Mine', artist: 'Guns N\' Roses', cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=300&q=80', duration: '5:56' },
-    { id: 4, title: 'Back In Black', artist: 'AC/DC', cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=300&q=80', duration: '4:15' },
-    { id: 5, title: 'Smells Like Teen Spirit', artist: 'Nirvana', cover: 'https://images.unsplash.com/photo-1598387181032-a3103a2db5b3?auto=format&fit=crop&w=300&q=80', duration: '5:02' },
-    { id: 6, title: 'Billie Jean', artist: 'Michael Jackson', cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=300&q=80', duration: '3:50' },
-    { id: 7, title: 'Stairway to Heaven', artist: 'Led Zeppelin', cover: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=300&q=80', duration: '8:02' },
-    { id: 8, title: 'Imagine', artist: 'John Lennon', cover: 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?auto=format&fit=crop&w=300&q=80', duration: '3:03'},
-    { id: 9, title: 'Like a Rolling Stone', artist: 'Bob Dylan', cover: 'https://images.unsplash.com/photo-1485579149621-3123dd979885?auto=format&fit=crop&w=300&q=80', duration: '6:13'},
-    { id: 10, title: 'Wonderwall', artist: 'Oasis', cover: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=300&q=80', duration: '4:18'}
+    { id: 1, title: 'Epic Journey', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=300&q=80', duration: '6:12', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+    { id: 2, title: 'Night Vibe', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?auto=format&fit=crop&w=300&q=80', duration: '7:05', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+    { id: 3, title: 'Summer Breeze', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=300&q=80', duration: '5:44', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+    { id: 4, title: 'Neon Lights', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=300&q=80', duration: '5:02', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
+    { id: 5, title: 'Deep Ocean', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1598387181032-a3103a2db5b3?auto=format&fit=crop&w=300&q=80', duration: '5:53', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
+    { id: 6, title: 'Morning Coffee', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=300&q=80', duration: '4:58', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3' },
+    { id: 7, title: 'Mountain Peak', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=300&q=80', duration: '5:22', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3' },
+    { id: 8, title: 'City Streets', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?auto=format&fit=crop&w=300&q=80', duration: '7:46', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'},
+    { id: 9, title: 'Desert Wind', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1485579149621-3123dd979885?auto=format&fit=crop&w=300&q=80', duration: '5:51', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3'},
+    { id: 10, title: 'Space Drift', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=300&q=80', duration: '6:42', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3'},
+    { id: 11, title: 'Cyber Punk', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=300&q=80', duration: '6:12', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3'},
+    { id: 12, title: 'Chill Lo-Fi', artist: 'SoundHelix', cover: 'https://images.unsplash.com/photo-1493225457124-a1a2a5f51508?auto=format&fit=crop&w=300&q=80', duration: '5:33', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3'}
   ];
 
+  // PLAYLISTS DE PRUEBA PRE-CARGADAS
   private playlistsList = signal<Playlist[]>([
-    { id: 1, name: 'Rock Clásico', description: 'Los mejores éxitos de los 70s y 80s', cover: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?auto=format&fit=crop&w=600&q=80', songs: [this.allSongs[0], this.allSongs[1], this.allSongs[2]] },
-    { id: 2, name: 'Para Entrenar', description: 'Música enérgica para el gimnasio', cover: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80', songs: [this.allSongs[3], this.allSongs[4]] },
-    { id: 3, name: 'Favoritas del mes', description: '', cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80', songs: [] }
+    { 
+      id: 1, 
+      name: 'Focus & Coding', 
+      description: 'Música ideal para concentrarse y escribir código sin distracciones.', 
+      cover: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80', 
+      songs: [this.allSongs[4], this.allSongs[9], this.allSongs[11], this.allSongs[8]] // Deep Ocean, Space Drift, Chill Lo-Fi, Desert Wind
+    },
+    { 
+      id: 2, 
+      name: 'Night Drive', 
+      description: 'Ritmos sintéticos y bajos profundos para manejar de noche.', 
+      cover: 'https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?auto=format&fit=crop&w=600&q=80', 
+      songs: [this.allSongs[1], this.allSongs[3], this.allSongs[7], this.allSongs[10]] // Night Vibe, Neon Lights, City Streets, Cyber Punk
+    },
+    { 
+      id: 3, 
+      name: 'Morning Energy', 
+      description: 'Empieza el día con la mejor actitud y energía positiva.', 
+      cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=600&q=80', 
+      songs: [this.allSongs[5], this.allSongs[2], this.allSongs[6], this.allSongs[0]] // Morning Coffee, Summer Breeze, Mountain Peak, Epic Journey
+    },
+    { 
+      id: 4, 
+      name: 'Mi Playlist Vacía', 
+      description: 'Lista creada recientemente sin canciones.', 
+      cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80', 
+      songs: [] // Para probar el estado de "Aún no hay canciones"
+    }
   ]);
 
   playlists = this.playlistsList.asReadonly();
