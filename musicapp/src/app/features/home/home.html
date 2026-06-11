@@ -1,21 +1,59 @@
 <div class="home-container">
   <h2 class="section-title">Recomendados</h2>
-  
+
   <div class="grid-layout">
-    <div class="song-card" *ngFor="let song of recommendedSongs" [class.active-menu]="playlistService.globalMenuSignal()?.song?.id === song.id">
-      <div class="cover-wrapper">
-        <img [src]="song.cover" [alt]="song.title" class="cover-img">
-        
-        <div class="hover-actions">
-          <button class="btn-play" (click)="playSong(song, $event)">▶</button>
-          <button class="btn-dots" (click)="playlistService.openGlobalSongMenu(song, $event, true)">⋮</button>
+
+    <ng-container *ngIf="isLoading">
+      <div class="song-card" *ngFor="let i of skeletonArray">
+        <div class="cover-wrapper skeleton-img" style="border-radius: 6px;"></div>
+        <div class="song-details">
+          <div class="skeleton-text-line"></div>
+          <div class="skeleton-text-line short"></div>
         </div>
       </div>
+    </ng-container>
 
-      <div class="song-details">
-        <h3 class="song-title" [title]="song.title">{{ song.title }}</h3>
-        <p class="song-artist" [title]="song.artist">{{ song.artist }}</p>
+    <ng-container *ngIf="!isLoading">
+      <div class="song-card" *ngFor="let song of recommendedSongs"
+        [class.active-menu]="playlistService.globalMenuSignal()?.song?.id === song.id">
+        <div class="cover-wrapper">
+          <img [src]="song.cover" [alt]="song.title" class="cover-img">
+
+          <div class="hover-actions">
+            <button class="btn-play" (click)="playSong(song, $event)">
+              <ng-container
+                *ngIf="playerService.currentSong()?.id === song.id && playerService.isPlaying(); else playIcon">
+                <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
+              </ng-container>
+              <ng-template #playIcon>
+                <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </ng-template>
+            </button>
+
+            <button class="btn-dots" (click)="playlistService.openGlobalSongMenu(song, $event, true)">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path
+                  d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="song-details">
+          <h3 class="song-title" [title]="song.title"
+            [class.is-playing-text]="playerService.currentSong()?.id === song.id">
+            <span class="playing-eq" *ngIf="playerService.currentSong()?.id === song.id && playerService.isPlaying()">
+              <span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span>
+            </span>
+            {{ song.title }}
+          </h3>
+          <p class="song-artist" [title]="song.artist">{{ song.artist }}</p>
+        </div>
       </div>
-    </div>
+    </ng-container>
+
   </div>
 </div>

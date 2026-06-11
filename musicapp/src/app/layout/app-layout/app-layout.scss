@@ -208,8 +208,6 @@ html, body {
   &.left .arrow-pointer { right: -8px; left: auto; border-width: 8px 0 8px 8px; border-color: transparent transparent transparent #282828; }
   &.top .arrow-pointer { top: 16px; bottom: auto; } 
   &.bottom .arrow-pointer { bottom: 16px; top: auto; } 
-
-  /* SOLUCIÓN AL SALTO DE TRANSICIÓN CUANDO EL MENÚ ABRE DE ABAJO HACIA ARRIBA */
   &.bottom .slider-track {
     .pane-playlists { top: auto; bottom: 0; }
     &.slide-to-playlists .pane-main { top: auto; bottom: 0; }

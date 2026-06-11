@@ -13,9 +13,7 @@ $text-muted: #b3b3b3;
 /* OVERLAY EXPANDIDO */
 .expanded-player-overlay {
   position: absolute; bottom: 100%; left: 0; right: 0; height: calc(100vh - 64px - 90px); background-color: #121212; box-sizing: border-box; z-index: 90; display: flex; flex-direction: column; transform: translateY(100%); opacity: 0; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease; pointer-events: none; 
-  /* CORRECCIÓN 1: Evita que todo el overlay se desborde hacia la barra inferior */
   overflow: hidden; 
-  
   &.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
 }
 
@@ -24,9 +22,7 @@ $text-muted: #b3b3b3;
   position: absolute; top: 20px; right: 20px; z-index: 100;
   .btn-close-expanded {
     background: transparent; border: none; color: $text-muted; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s;
-    
     .arrow-close-1, .arrow-close-2 { transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
-    
     &:hover { 
       color: white; background: rgba(255, 255, 255, 0.1); 
       .arrow-close-1 { transform: translate(2px, -2px); } 
@@ -37,7 +33,7 @@ $text-muted: #b3b3b3;
 
 .expanded-content-grid {
   flex: 1; display: grid; grid-template-columns: 45% 55%; padding: 40px 5%; height: 100%; box-sizing: border-box; 
-  overflow: hidden; /* Obliga al Grid a respetar la altura del overlay */
+  overflow: hidden; 
 }
 
 /* LADO IZQUIERDO: CANCIÓN ACTUAL */
@@ -46,8 +42,9 @@ $text-muted: #b3b3b3;
   
   .elegant-cover-wrapper { 
     width: 100%; max-width: 260px; 
-    aspect-ratio: 1 / 1; margin-bottom: 30px; 
-    .elegant-shadow { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 8px 16px rgba(0, 0, 0, 0.4); transition: transform 0.3s ease; } 
+    aspect-ratio: 1 / 1; margin-bottom: 30px;
+    position: relative; 
+    .elegant-shadow { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 8px 16px rgba(0, 0, 0, 0.4); } 
     &:hover .elegant-shadow { transform: scale(1.03); }
   }
   
@@ -58,13 +55,10 @@ $text-muted: #b3b3b3;
   }
 }
 
-/* LADO DERECHO: COLA DE REPRODUCCIÓN */
 .queue-panel {
   display: flex; flex-direction: column; height: 100%; box-sizing: border-box; padding: 10px 0 10px 30px;
-  
-  /* CORRECCIÓN 2: Obligamos a esta columna a no crecer infinitamente */
   overflow: hidden; 
-  min-height: 0; /* La verdadera magia que rompe el límite del flexbox */
+  min-height: 0; 
   
   .queue-header { 
     margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -73,11 +67,8 @@ $text-muted: #b3b3b3;
   }
   
   .queue-scroll-container { 
-    flex: 1; overflow-y: auto; padding-right: 12px; 
-    
-    /* CORRECCIÓN 3: Permitimos que el contenedor interno haga scroll */
+    flex: 1; overflow-y: auto; overflow-x: hidden; padding-right: 12px; 
     min-height: 0; 
-    
     &::-webkit-scrollbar { width: 6px; } 
     &::-webkit-scrollbar-track { background: transparent; } 
     &::-webkit-scrollbar-thumb { background: #3e3e3e; border-radius: 6px; } 
@@ -87,10 +78,29 @@ $text-muted: #b3b3b3;
 
 /* Ítems de la canción */
 .song-item {
-  display: flex; align-items: center; padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: background 0.2s; position: relative; margin-bottom: 4px;
+  display: flex; align-items: center; padding: 10px 14px; border-radius: 8px; cursor: pointer; position: relative; 
+  margin-bottom: 4px;
+  
+  /* Transiciones combinadas */
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1), background 0.2s;
+  max-height: 100px;
+  overflow: hidden;
+  border: 1px solid transparent; /* Ayuda a evitar saltos de borde */
   
   &:hover, &.menu-open { background: rgba(255, 255, 255, 0.1); .song-state-overlay { opacity: 1; } .btn-more { opacity: 1; } }
   &.is-active { background: rgba(255, 255, 255, 0.12); .song-title { color: #1db954 !important; font-weight: 600; } .song-state-overlay { opacity: 1; } }
+
+  /* EFECTO DE DESVANECIMIENTO PARA ÍTEMS DE LA LISTA */
+  &.fade-out-item {
+    opacity: 0 !important;
+    transform: translateX(30px) !important; 
+    max-height: 0 !important; 
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    border: none !important;
+    pointer-events: none; 
+  }
 
   .song-cover-container { 
     width: 44px; height: 44px; position: relative; border-radius: 50%; overflow: hidden; margin-right: 16px; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
@@ -112,7 +122,9 @@ $text-muted: #b3b3b3;
 .audio-wave-overlay {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: flex; align-items: flex-end; justify-content: center; gap: 3px; padding-bottom: 12px; border-radius: 50%; z-index: 2;
   .wave-bar { width: 3px; height: 50%; background-color: #1db954; animation: soundWave 0.6s ease-in-out infinite alternate; transform-origin: bottom; &:nth-child(2) { animation-delay: 0.2s; animation-duration: 0.4s; } &:nth-child(3) { animation-delay: 0.4s; animation-duration: 0.7s; } }
-  &.mini-wave { padding-bottom: 12px; gap: 2px; border-radius: 4px; .wave-bar { width: 2px; } }
+  &.mini-wave { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; border-radius: inherit; 
+  .wave-bar { background-color: #1db954; width: 5px; border-radius: 2px; } 
+}
 }
 .is-paused .audio-wave-overlay .wave-bar { animation-play-state: paused !important; }
 
@@ -120,15 +132,12 @@ $text-muted: #b3b3b3;
 
 /* BARRA INFERIOR (CONTROLES Y BOTÓN EXPANDIR) */
 .now-playing-info { display: flex; align-items: center; flex: 1; min-width: 180px; .song-image { width: 56px; height: 56px; border-radius: 4px; background-color: #282828; overflow: hidden; margin-right: 12px; flex-shrink: 0; img { width: 100%; height: 100%; object-fit: cover; } } .song-details { overflow: hidden; white-space: nowrap; .song-title { color: white; font-size: 0.9rem; font-weight: 500; margin: 0 0 4px 0; text-overflow: ellipsis; overflow: hidden; } .song-artist { color: $text-muted; font-size: 0.8rem; margin: 0; text-overflow: ellipsis; overflow: hidden; } } }
-.player-controls { display: flex; align-items: center; gap: 16px; flex: 1; justify-content: center; .ctrl-btn { background: none; border: none; color: $text-muted; cursor: pointer; padding: 8px; &:hover { color: white; } } .play-btn { background-color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: black; cursor: pointer; transition: transform 0.2s; &:hover { transform: scale(1.05); } } }
+.player-controls { display: flex; align-items: center; gap: 16px; flex: 1; justify-content: center; .ctrl-btn { background: none; border: none; color: $text-muted; cursor: pointer; padding: 8px; &:hover { color: white; } } }
 .player-actions { 
   display: flex; align-items: center; justify-content: flex-end; flex: 1; padding-right: 8px; 
-  
   .btn-expand { 
     background: transparent; border: none; color: $text-muted; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s;
-    
     .arrow-top-right, .arrow-bottom-left { transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); } 
-    
     &:hover { 
       color: white; background: rgba(255,255,255,0.1); 
       .arrow-top-right { transform: translate(2px, -2px); } 
@@ -146,9 +155,117 @@ $text-muted: #b3b3b3;
   }
 }
 
-/* --- MAGIA DEL HOVER DE PAUSA EN EL REPRODUCTOR EXPANDIDO --- */
 .hover-pause-icon { display: none; color: white; z-index: 3; }
 .song-item.is-active:hover {
   .audio-wave-overlay { display: none !important; }
   .hover-pause-icon { display: flex; }
+}
+
+/* ANIMACIÓN SHIMMER PARA SKELETONS DE CARGA */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  z-index: 10;
+}
+
+/* CONSOLIDACIÓN: Estilos base, hover y carga del botón Play */
+.play-btn {
+  background-color: white; 
+  border: none; 
+  width: 40px; 
+  height: 40px; 
+  border-radius: 50%; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  color: black; 
+  cursor: pointer; 
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); 
+  
+  &:hover { transform: scale(1.05); }
+
+  &.loading-state {
+    background-color: transparent; 
+    border: 2px solid rgba(255, 255, 255, 0.1); 
+    transform: scale(1.05); 
+    cursor: default;
+    
+    &:hover { transform: scale(1.05); } 
+  }
+
+  // Spinner para estado de carga del botón Play
+  .spinner-loader {
+    width: 22px; 
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.15); 
+    border-top-color: #1db954; 
+    animation: smoothSpin 0.8s linear infinite;
+    box-sizing: border-box;
+  }
+}
+
+@keyframes smoothSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Transición suave de opacidad para ocultar/mostrar portadas al cargar */
+.elegant-shadow, .song-image img {
+  transition: transform 0.3s ease, opacity 0.4s ease !important;
+}
+
+.song-item.is-loading {
+  background: rgba(255, 255, 255, 0.12);
+  
+  .audio-wave-overlay, .hover-pause-icon, .fixed-play-icon {
+    display: none !important;
+  }
+  
+  .song-state-overlay {
+    opacity: 1 !important;
+  }
+}
+
+/* SKELETONS PARA TEXTOS (Títulos y Artistas) */
+.text-skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 4px;
+  height: 14px;
+  width: 80%;
+  
+  &.short { width: 50%; }
+  
+  /* Variantes para el reproductor expandido */
+  &.title-skeleton { 
+    height: 28px; 
+    width: 60%; 
+    margin: 0 auto 10px auto; 
+    border-radius: 6px;
+  }
+  &.artist-skeleton { 
+    height: 18px; 
+    width: 40%; 
+    margin: 0 auto; 
+  }
+}
+
+.elegant-shadow, .song-image img, .song-cover-container img {
+  opacity: 1;
+  transition: transform 0.3s ease, opacity 0.4s ease;
+  
+  &.hide-instantly {
+    opacity: 0 !important;
+    transition: none !important;
+  }
 }

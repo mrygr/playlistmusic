@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+// Define la interfaz AppNotification para representar la estructura de una notificación en la aplicación.
+// La interfaz incluye un mensaje, un tipo (success, error, info) y un indicador de visibilidad (show).
+// La clase NotificationService es un servicio de Angular que maneja el estado de las notificaciones en la aplicación.
+// Utiliza BehaviorSubject para mantener el estado actual de la notificación y permitir que los componentes se suscriban a los cambios.
+// El método show() actualiza el estado de la notificación y establece un temporizador para cerrarla automáticamente después de 5 segundos.
+// El método close() actualiza el estado para ocultar la notificación.
+
 export interface AppNotification {
   message: string;
   type: 'success' | 'error' | 'info';
@@ -24,7 +31,7 @@ export class NotificationService {
     
     this.timeoutId = setTimeout(() => {
       this.close();
-    }, 3500);
+    }, 5000);
   }
 
   close() {

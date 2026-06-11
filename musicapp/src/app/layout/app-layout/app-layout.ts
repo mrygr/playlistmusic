@@ -7,6 +7,10 @@ import { NotificationService } from '../../core/services/notification';
 import { PlayerService } from '../../core/services/player';
 import { Player } from '../player/player';
 
+// Componente principal del layout de la aplicación, maneja la estructura general, el menú lateral y el reproductor global
+// Implementa un menú lateral con navegación entre vistas y un menú global para gestionar canciones y playlists desde cualquier parte de la app
+// Incluye un reproductor global que se mantiene accesible en todo momento, permitiendo controlar la reproducción sin importar dónde estemos en la app
+
 @Component({
   selector: 'app-app-layout',
   standalone: true,
@@ -18,11 +22,8 @@ export class AppLayout implements OnInit {
   private router = inject(Router);
   playlistService = inject(PlaylistService);
   notificationService = inject(NotificationService);
-
   username: string = 'Usuario';
   isSidebarCollapsed: boolean = false;
-  
-  // Variables del modal global
   newPlaylistName: string = '';
   newPlaylistDesc: string = '';
 
@@ -40,10 +41,7 @@ export class AppLayout implements OnInit {
   toggleSidebar() { this.isSidebarCollapsed = !this.isSidebarCollapsed; }
   
   cerrarSesion() { 
-    // 1. Apagamos el reproductor y limpiamos el estado antes de destruir la sesión
     this.playerService.stopAndClearQueue(); 
-    
-    // 2. Borramos los datos de sesión y redirigimos
     localStorage.removeItem('user_session'); 
     this.router.navigate(['/login']); 
   }

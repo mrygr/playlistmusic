@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../core/services/notification';
 
+// Permite mostrar notificaciones en la aplicación. Se suscribe al servicio de notificaciones para mostrar mensajes y permite cerrarlos.
+
 @Component({
   selector: 'app-notification',
   standalone: true,

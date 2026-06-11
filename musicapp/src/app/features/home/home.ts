@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../core/services/notification';
 import { PlaylistService, Song } from '../../core/services/playlist';
-import { PlayerService } from '../../core/services/player'; // <-- 1. Importamos el servicio del reproductor
+import { PlayerService } from '../../core/services/player'; 
 
 @Component({
   selector: 'app-home',
@@ -11,25 +11,33 @@ import { PlayerService } from '../../core/services/player'; // <-- 1. Importamos
   templateUrl: './home.html', 
   styleUrl: './home.scss'    
 })
-export class Home { 
+export class Home implements OnInit { 
   private notificationService = inject(NotificationService);
   public playlistService = inject(PlaylistService);
-  public playerService = inject(PlayerService); // <-- 2. Lo inyectamos para poder usarlo
+  public playerService = inject(PlayerService);
+  private cdr = inject(ChangeDetectorRef); // Evita problemas de actualización de UI con el esqueleto de carga
 
-  // Consumimos las canciones desde la "fuente de verdad" del servicio
-  get recommendedSongs(): Song[] {
-    return this.playlistService.allSongs.slice(0, 10);
+  public isLoading: boolean = true;
+  public skeletonArray = [1, 2, 3, 4]; 
+
+  // Simulamos carga de datos para mostrar el esqueleto de carga
+  ngOnInit() {
+    this.isLoading = true;
+    this.cdr.detectChanges(); // Forzamos actualización de UI
+    setTimeout(() => {
+      this.isLoading = false;
+      this.cdr.detectChanges(); // Finaliza el esqueleto de forma segura
+    }, 800);
   }
 
+  // Obtenemos las canciones recomendadas (simulando una lógica de recomendación)
+  get recommendedSongs(): Song[] {
+    return this.playlistService.allSongs.slice(0, 12);
+  }
+
+  // Método para reproducir una canción al hacer clic en ella en la lista de recomendaciones
   playSong(song: Song, event: Event) {
     event.stopPropagation();
-    
-    // 3. ¡LA MAGIA AQUÍ! 
-    // Al pasar solo "song" (sin una playlist de segundo parámetro), 
-    // el reproductor sabe que debe eliminar la cola anterior y reproducir solo esta.
     this.playerService.playSong(song);
-    
-    // Mantenemos tu notificación para darle feedback al usuario
-    //this.notificationService.show(`Reproduciendo: ${song.title}`, 'success');
   }
 }
